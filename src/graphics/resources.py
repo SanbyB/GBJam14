@@ -19,6 +19,12 @@ PAUSE = Animation(PAUSE, 0, 0)
 START = SpriteSheet(pygame.image.load(os.path.join("Graphics", "startScreen.png")), 1, 1)
 START = Animation(START, 0, 0)
 
+HEART = SpriteSheet(pygame.image.load(os.path.join("Graphics", "heart.png")), 1, 1)
+HEART = Animation(HEART, 0, 0)
+
+GRID = SpriteSheet(pygame.image.load(os.path.join("Graphics", "grid.png")), 1, 1)
+GRID = Animation(GRID, 0, 0)
+
 
 class BulletSprite():
     sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "bullet.png")), 1, 1)

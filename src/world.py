@@ -4,7 +4,7 @@ from entites.player import Player
 from entites.enemy import Enemy
 from entites.bullet import Bullet
 from conf import *
-from graphics.resources import EnemySprite
+from graphics.resources import *
 
 class World():
     def __init__(self, screen):
@@ -84,7 +84,13 @@ class World():
         for b in self.bullets + self.enemyBullets:
             b.render(self.screen)
 
+        for heart in range(self.player.lives):
+            x = SCREEN_WIDTH - ((HEART.spritesheet.imageWidth + BORDER) * (heart + 0.5) * SCALE)
+            HEART.draw(self.screen, x, (HEART.spritesheet.imageHeight/2 + BORDER) * SCALE)
+
         pygame.draw.rect(self.screen, 'white', (RIGHT_BORDER, 0, SCALE, SCREEN_HEIGHT))
+
+        GRID.draw(self.screen, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
 
     def reset(self):
         self.enemies = []

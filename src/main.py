@@ -50,6 +50,9 @@ class Game():
                                             if event.key == pygame.K_ESCAPE:
                                                 paused = False
                                                 self.paused = False
+                                        elif event.type == QUIT:
+                                            pygame.quit()
+                                            sys.exit()
 
                 else:
                     self.world.player.keysPressed = self.keysPressed
