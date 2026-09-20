@@ -1,11 +1,14 @@
 import sys
 import pygame
+import os.path
 from pygame.locals import *
 from conf import *
 from world import World
-from graphics.resources import GAMEOVER, GAMEOVER_CONT, START, PRESS_START, PAUSE
+from graphics.resources import *
 
+pygame.init()
 pygame.display.set_caption('Tetrinvaders')
+pygame.display.set_icon(pygame.image.load(os.path.join("Graphics", "spaceshipIcon.png")))
 
 class Game():
     def __init__(self):
@@ -16,7 +19,7 @@ class Game():
         self.paused = False
 
 
-    def update(self):
+    def update(self, events):
         pygame.draw.rect(self.screen, (0, 0, 0, 255), Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)) # type: ignore
         self.world.render()
 
@@ -34,13 +37,14 @@ class Game():
                     self.paused = True
 
                 if self.paused:
+                    pygame.mixer.music.pause()
                     PAUSE.draw(
                         surface=self.screen,
                         x=SCREEN_WIDTH/2,
                         y=SCREEN_HEIGHT/2,
                         scale=SCALE
                     )
-                    for event in pygame.event.get():
+                    for event in events:
                         if event.type == pygame.KEYUP:
                             if event.key == pygame.K_ESCAPE:
                                 paused = True
@@ -55,13 +59,16 @@ class Game():
                                             sys.exit()
 
                 else:
-                    self.world.player.keysPressed = self.keysPressed
-                    self.world.update()
+                    pygame.mixer.music.unpause()
+                    # self.world.player.keysPressed = self.keysPressed
+                    self.world.update(events)
         else:
+            pygame.mixer.music.pause()
             self.start()
 
 
     def gameOver(self):
+        pygame.mixer.music.pause()
         GAMEOVER.draw(
             surface=self.screen,
             x=SCREEN_WIDTH/2,
@@ -94,18 +101,20 @@ class Game():
 
     def start(self):
         START.draw(
-                surface=self.screen,
-                x=SCREEN_WIDTH/2,
-                y=SCREEN_HEIGHT/2,
-                scale=SCALE
-            )
+            surface=self.screen,
+            x=SCREEN_WIDTH/2,
+            y=SCREEN_HEIGHT/2,
+            scale=SCALE
+        )
         PRESS_START.draw(
             surface=self.screen,
             x=SCREEN_WIDTH/2,
             y=SCREEN_HEIGHT/2,
             scale=SCALE
         )
+        START.update()
         PRESS_START.update()
+
         if self.keysPressed[pygame.K_RETURN]:
             self.started = True
 
@@ -114,12 +123,22 @@ RUNNING = True
 game = Game()
 clock = pygame.time.Clock()
 
+# pygame.mixer.init()
+
+pygame.mixer.music.load(os.path.join("Audio", "bgMusic.wav")) 
+pygame.mixer.music.set_volume(BACKGROUND_VOLUME)     
+pygame.mixer.music.play(-1,0.0)
+
+# pygame.mixer.init(frequency=22050, size=-16, channels=1, buffer=8192)
+
+
 while RUNNING:
     dt = clock.tick(60)
-    # Clear the screen
-    game.update()
-    for event in pygame.event.get():
-        if event.type == QUIT: # type: ignore
+    events = pygame.event.get()
+
+    game.update(events)
+    for event in events:
+        if event.type == QUIT:
             pygame.quit()
             sys.exit()
     

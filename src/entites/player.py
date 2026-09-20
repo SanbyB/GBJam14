@@ -7,7 +7,7 @@ class Player(Entity):
     def __init__(self, pos):
         super().__init__(pos)
         self.keysPressed = []
-        self.animation = PlayerSprite.PLAYER_IDLE
+        self.animation = PlayerSprite.PLAYER_SHOOT
         self.width, self.height = PlayerSprite.width * SCALE, PlayerSprite.height * SCALE
 
         self.y = SCREEN_HEIGHT - self.height/2 - BORDER
@@ -23,8 +23,11 @@ class Player(Entity):
         elif self.bulletTimer < 0:
             self.bulletTimer = 0
 
-        self.vx = 0        
-        self.keyInputs()
+        # self.vx = 0        
+        # self.keyInputs()
+
+        self.shoot()
+
         if self.x < BORDER + self.width/2:
             self.vx = 0
             self.x = self.width/2 + BORDER
@@ -32,6 +35,19 @@ class Player(Entity):
             self.vx = 0
             self.x = RIGHT_BORDER - self.width/2 - BORDER
 
+    def movePlayer(self, direction):
+        if direction == "left":
+            self.vx = -PLAYER_SPEED
+        elif direction == "right":
+            self.vx = PLAYER_SPEED
+        else:
+            self.vx = 0
+
+    def shoot(self):
+        self.spawnBullet = False
+        if self.bulletTimer == 0:
+            self.spawnBullet = True
+            self.bulletTimer = PLAYER_BULLET_DELAY
 
     def keyInputs(self):
         

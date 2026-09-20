@@ -3,6 +3,8 @@ import random
 from entites.player import Player
 from entites.enemy import Enemy
 from entites.bullet import Bullet
+from tetris import *
+from controller import Controller
 from conf import *
 from graphics.resources import *
 
@@ -13,10 +15,74 @@ class World():
         self.enemies = []
         self.bullets = []
         self.enemyBullets = []
-        self.reset()
         self.bulletTimer = ENEMY_BULLET_DELAY
 
-    def update(self):
+        self.grid = Grid()
+        self.tet = Tetris(self.grid)
+        self.control = Controller(self.tet)
+
+        self.reset()
+
+    def initPieces(self):
+        for i in range(NUM_TETROMINOS):
+            self.spawnPiece()
+
+    def spawnPiece(self):
+        piecesInTet = []
+        for tet in self.tet.select:
+            if isinstance(tet, T):
+                piecesInTet.append(0)
+            elif isinstance(tet, S):
+                piecesInTet.append(1)
+            elif isinstance(tet, Z):
+                piecesInTet.append(2)
+            elif isinstance(tet, Lright):
+                piecesInTet.append(3)
+            elif isinstance(tet, Lleft):
+                piecesInTet.append(4)
+            elif isinstance(tet, stick):
+                piecesInTet.append(5)
+            elif isinstance(tet, sqr):
+                piecesInTet.append(6)
+
+        piecesToChoose = list(set([0,1,2,3,4,5,6]) - set(piecesInTet))
+
+        piece = None
+        rand = random.randint(0, len(piecesToChoose) - 1)
+        rand = piecesToChoose[rand]
+        colour = random.randint(1, 5)
+        if rand == 0:
+            piece = T(colour)
+        elif rand == 1:
+            piece = S(colour)
+        elif rand == 2:
+            piece = Z(colour)
+        elif rand == 3:
+            piece = Lright(colour)
+        elif rand == 4:
+            piece = Lleft(colour)
+        elif rand == 5:
+            piece = stick(colour)
+        elif rand == 6:
+            piece = sqr(colour)
+
+        self.tet.spawn(piece)
+
+    def update(self, events):
+        self.grid.clearRowCol(self.grid.checkRowCol())
+        self.control.update(events)
+        if self.control.spawnNew:
+            self.spawnPiece()
+            self.control.spawnNew = False
+        self.tet.update()
+
+        pink = self.grid.sum()
+        if pink < -PLAYER_MOVE_LIMIT:
+            self.player.movePlayer("right")
+        elif pink > PLAYER_MOVE_LIMIT:
+            self.player.movePlayer("left")
+        else:
+            self.player.movePlayer("stop")
         
         self.player.update()
         if self.player.spawnBullet:
@@ -35,7 +101,7 @@ class World():
                     continue
 
         if self.enemies == []:
-            self.reset()
+            self.clearEnemies()
 
         for b in self.enemyBullets:
             b.update()
@@ -70,7 +136,8 @@ class World():
         self.bulletTimer -= 1
         if self.bulletTimer <= 0:
             self.bulletTimer = ENEMY_BULLET_DELAY
-        if random.randint(0, self.bulletTimer) < ENEMY_BULLET_CHANCE:
+        rand = random.randint(0, self.bulletTimer)
+        if rand < ENEMY_BULLET_CHANCE:
             b = Bullet((random.randint(int(minX/SCALE), int(maxX/SCALE))*SCALE, minY))
             b.playerBullet = False
             self.enemyBullets.append(b)
@@ -90,9 +157,11 @@ class World():
 
         pygame.draw.rect(self.screen, 'white', (RIGHT_BORDER, 0, SCALE, SCREEN_HEIGHT))
 
-        GRID.draw(self.screen, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+        GRID.draw(self.screen, GRID_X, GRID_Y, refPoint="topLeft")
+        self.grid.render(self.screen)
+        self.tet.render(self.screen)
 
-    def reset(self):
+    def clearEnemies(self):
         self.enemies = []
         for i in range(ENEMIES_X):
             for j in range(ENEMIES_Y):
@@ -102,3 +171,11 @@ class World():
                 e.x = x
                 e.y = y
                 self.enemies.append(e)
+        
+
+    def reset(self):
+        self.grid.resetGrid()
+        self.clearEnemies()
+        self.tet.select = []
+        self.control.initState()
+        self.initPieces()       

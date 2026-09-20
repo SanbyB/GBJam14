@@ -15,14 +15,16 @@ class Animation:
         self.frame += self.speed
         return
 
-    def draw(self, surface, x, y, scale=SCALE):
+    def draw(self, surface, x, y, scale=SCALE, rot=0, refPoint="centre"):
         xFrame = floor(self.frame) % self.spritesheet.xFrames
         self.spritesheet.draw(
             surface,
             xFrame,
             self.yFrame,
             x, y,
-            scale
+            scale,
+            rot,
+            refPoint
         )
         return
 
@@ -31,6 +33,9 @@ class Animation:
 
     def setFrame(self, frame):
         self.frame = frame
+
+    def getFrame(self):
+        return self.frame
 
 
 

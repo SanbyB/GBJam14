@@ -10,14 +10,14 @@ GAMEOVER = Animation(GAMEOVER, 0, 0.1)
 GAMEOVER_CONT = SpriteSheet(pygame.image.load(os.path.join("Graphics", "gameoverCont.png")), 2, 1)
 GAMEOVER_CONT = Animation(GAMEOVER_CONT, 0, 0.05)
 
-PRESS_START = SpriteSheet(pygame.image.load(os.path.join("Graphics", "pressStart.png")), 2, 1)
+PRESS_START = SpriteSheet(pygame.image.load(os.path.join("Graphics", "pressStart.png")), 3, 1)
 PRESS_START = Animation(PRESS_START, 0, 0.05)
 
 PAUSE = SpriteSheet(pygame.image.load(os.path.join("Graphics", "pause.png")), 1, 1)
 PAUSE = Animation(PAUSE, 0, 0)
 
-START = SpriteSheet(pygame.image.load(os.path.join("Graphics", "startScreen.png")), 1, 1)
-START = Animation(START, 0, 0)
+START = SpriteSheet(pygame.image.load(os.path.join("Graphics", "startScreen.png")), 2, 1)
+START = Animation(START, 0, 0.1)
 
 HEART = SpriteSheet(pygame.image.load(os.path.join("Graphics", "heart.png")), 1, 1)
 HEART = Animation(HEART, 0, 0)
@@ -58,3 +58,42 @@ class EnemySprite():
     sprite5 = SpriteSheet(pygame.image.load(os.path.join("Graphics", "enemy5.png")), 3, 1)
     ENEMY5 = Animation(sprite5, 0, 0)
     w5, h5 = sprite5.imageWidth, sprite5.imageHeight
+
+class Tetrominos():
+    class singleTile():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "singlePiece.png")), 6, 1)
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class T():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "tPiece.png")), 6, 1)
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class Lleft():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "lPiece.png")), 6, 1)
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class Lright():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "lPiece.png")), 6, 1)
+        sprite.flip = True
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class S():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "sPiece.png")), 6, 1)
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class Z():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "sPiece.png")), 6, 1)
+        sprite.flip = True
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class Stick():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "stickPiece.png")), 6, 1)
+        w, h = sprite.imageWidth, sprite.imageHeight
+
+    class Square():
+        sprite = SpriteSheet(pygame.image.load(os.path.join("Graphics", "sqrPiece.png")), 6, 1)
+        w, h = sprite.imageWidth, sprite.imageHeight
+    
+
+
+        
