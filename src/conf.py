@@ -1,3 +1,10 @@
+import sys, os
+
+def resource_path(*parts):
+    # When frozen, PyInstaller unpacks assets to sys._MEIPASS
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return os.path.join(base, *parts)
+
 # screen configs
 SCALE = 3
 
@@ -6,6 +13,8 @@ SCREEN_HEIGHT = 144 * SCALE
 
 BORDER = SCALE
 RIGHT_BORDER = SCREEN_WIDTH * 0.7
+
+SCORE_X, SCORE_Y = RIGHT_BORDER + BORDER * 2, SCREEN_HEIGHT * 0.93
 
 # grid configs
 GRID_X, GRID_Y = RIGHT_BORDER + BORDER * 2, SCREEN_HEIGHT * 0.5
@@ -28,25 +37,25 @@ SELECT_FLASH_SPEED = 10
 NUM_TETROMINOS = 4
 
 # player configs
-PLAYER_SPEED = 0.1 * SCALE
+PLAYER_SPEED = 0.14 * SCALE
 PLAYER_BULLET_DELAY = 60
 PLAYER_MOVE_LIMIT = 5
 DOUBLE_SHOOT_TIME = 10
 
 # enemy configs
-MOVE_COUNTER = 25
+MOVE_COUNTER = 18
 ENEMIES_X = 7
 ENEMIES_Y = 6
 ENEMY_SPEED = SCALE
 # number counts down each update to increase the chance of enemy producing bullet
-ENEMY_BULLET_DELAY = 2500
+ENEMY_BULLET_DELAY = 3000
 # if a random number generated between 0 and the above number is less than this number an enemy will produce a bullet
 ENEMY_BULLET_CHANCE = 2
 ENEMY_BORDER = SCREEN_HEIGHT * 0.8
 
 # bullet configs
 BULLET_SPEED = 3 * SCALE
-ENEMY_BULLET_SPEED = 0.25 * SCALE
+ENEMY_BULLET_SPEED = 0.2 * SCALE
 
 # sound configs
 BACKGROUND_VOLUME = 0.5

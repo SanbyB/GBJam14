@@ -9,6 +9,9 @@ from conf import *
 from graphics.resources import *
 from audioResources import *
 
+pygame.init()
+font = pygame.font.Font('freesansbold.ttf', 32)
+
 class World():
     def __init__(self, screen):
         self.screen = screen
@@ -80,7 +83,6 @@ class World():
         self.lineCleared = False
         self.rowCleared = False
 
-        print(self.score)
 
         rowsCols = self.grid.checkRowCol()
         if len(rowsCols[0]) != 0 or len(rowsCols[1]) != 0:
@@ -100,7 +102,7 @@ class World():
         if self.player.spawnBullet:
             self.bullets.append(Bullet((self.player.x, self.player.y)))
 
-        for b in self.bullets:
+        for b in self.bullets[:]:
             b.update()
             if b.y < 0:
                 self.bullets.remove(b)
@@ -112,14 +114,16 @@ class World():
                         self.enemies.remove(e)
                     if b in self.bullets:
                         self.bullets.remove(b)
-                    continue
+                    break
 
         if self.enemies == []:
             self.rowCleared = True
+            if self.player.lives < 3:
+                self.player.lives += 1
             self.score += 50
             self.clearEnemies()
 
-        for b in self.enemyBullets:
+        for b in self.enemyBullets[:]:
             b.update()
             if b.y > SCREEN_HEIGHT:
                 self.enemyBullets.remove(b)
@@ -189,6 +193,11 @@ class World():
         GRID.draw(self.screen, GRID_X, GRID_Y, refPoint="topLeft")
         self.grid.render(self.screen)
         self.tet.render(self.screen)
+
+        text = font.render(str(self.score), True, ((255,255,255)), (0,0,0))
+        textRect = text.get_rect()
+        textRect.topleft = (SCORE_X, SCORE_Y)
+        self.screen.blit(text, textRect)
 
     def clearEnemies(self):
         self.enemies = []

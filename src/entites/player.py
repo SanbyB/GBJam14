@@ -43,6 +43,8 @@ class Player(Entity):
             self.x = RIGHT_BORDER - self.width/2 - BORDER
 
     def movePlayer(self, speed):
+        if abs(speed) == 2:
+            speed = speed * 0.75
         self.vx = PLAYER_SPEED * speed
 
     def shoot(self):

@@ -389,29 +389,3 @@ class Grid():
                     tile = singleTile(self.grid[i][j])
                     tile.animation.setFrame(self.grid[i][j])
                     tile.animation.draw(screen, x, y, refPoint="topLeft")
-
-if __name__ == "__main__":
-
-    grid = Grid()
-
-    # grid.grid = [[1, 2, 3, 4, 5, 5],
-    #              [0, 1, 1, 4, 5, 5],
-    #              [1, 2, 3, 4, 5, 5],
-    #              [0, 0, 1, 4, 5, 5],
-    #              [1, 2, 3, 4, 0, 5],
-    #              [0, 1, 1, 4, 5, 5],
-    #              [1, 2, 3, 4, 5, 5],
-    #              [0, 1, 1, 4, 5, 5],
-    #              [1, 2, 3, 4, 5, 5],
-    #              [0, 1, 1, 4, 5, 5]]
-
-    grid.addTetromino(Tetrominoes.T.Tup, (0, 0), 4)
-    grid.addTetromino(Tetrominoes.S.Sright, (3, 6), 1)
-    grid.addTetromino(Tetrominoes.stick.stickright, (0, 0), 4)
-    grid.addTetromino(Tetrominoes.sqr.sqr, (5, 7), 2)
-
-    print(grid.checkRowCol())
-    print(grid.sum())
-    grid.clearRowCol(grid.checkRowCol())
-    print(grid.grid)
-    print(grid.sum())

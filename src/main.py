@@ -7,9 +7,9 @@ from world import World
 from graphics.resources import *
 
 pygame.init()
-pygame.mixer.init()
+
 pygame.display.set_caption('Tetrinvaders')
-pygame.display.set_icon(pygame.image.load(os.path.join("Graphics", "spaceshipIcon.png")))
+pygame.display.set_icon(pygame.image.load(resource_path("Graphics", "spaceshipIcon.png")))
 
 class Game():
     def __init__(self):
@@ -18,6 +18,15 @@ class Game():
         self.keysPressed = pygame.key.get_pressed()
         self.started = False
         self.paused = False
+        self.musicPaused = False
+
+    def setMusicPaused(self, paused):
+        if paused != self.musicPaused:
+            if paused:
+                pygame.mixer.music.pause()
+            else:
+                pygame.mixer.music.unpause()
+            self.musicPaused = paused
 
     def update(self, events):
         pygame.draw.rect(self.screen, (0, 0, 0, 255), Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)) # type: ignore
@@ -37,7 +46,7 @@ class Game():
                     self.paused = True
 
                 if self.paused:
-                    pygame.mixer.music.pause()
+                    self.setMusicPaused(True)
                     PAUSE.draw(
                         surface=self.screen,
                         x=SCREEN_WIDTH/2,
@@ -59,16 +68,16 @@ class Game():
                                             sys.exit()
 
                 else:
-                    pygame.mixer.music.unpause()
+                    self.setMusicPaused(False) 
                     # self.world.player.keysPressed = self.keysPressed
                     self.world.update(events)
         else:
-            pygame.mixer.music.pause()
+            self.setMusicPaused(True)
             self.start()
 
 
     def gameOver(self):
-        pygame.mixer.music.pause()
+        self.setMusicPaused(True)
         GAMEOVER.draw(
             surface=self.screen,
             x=SCREEN_WIDTH/2,
@@ -125,7 +134,7 @@ clock = pygame.time.Clock()
 
 # pygame.mixer.init()
 
-pygame.mixer.music.load(os.path.join("Audio", "bgMusic.wav")) 
+pygame.mixer.music.load(resource_path("Audio", "bgMusic.wav")) 
 pygame.mixer.music.set_volume(BACKGROUND_VOLUME)     
 pygame.mixer.music.play(-1,0.0)
 
