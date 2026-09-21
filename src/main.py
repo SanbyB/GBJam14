@@ -7,6 +7,7 @@ from world import World
 from graphics.resources import *
 
 pygame.init()
+pygame.mixer.init()
 pygame.display.set_caption('Tetrinvaders')
 pygame.display.set_icon(pygame.image.load(os.path.join("Graphics", "spaceshipIcon.png")))
 
@@ -17,7 +18,6 @@ class Game():
         self.keysPressed = pygame.key.get_pressed()
         self.started = False
         self.paused = False
-
 
     def update(self, events):
         pygame.draw.rect(self.screen, (0, 0, 0, 255), Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)) # type: ignore
@@ -135,11 +135,12 @@ pygame.mixer.music.play(-1,0.0)
 while RUNNING:
     dt = clock.tick(60)
     events = pygame.event.get()
+    for event in events:
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
 
     game.update(events)
-    for event in events:
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+    
     
     pygame.display.update()

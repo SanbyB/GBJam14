@@ -7,6 +7,7 @@ from tetris import *
 from controller import Controller
 from conf import *
 from graphics.resources import *
+from audioResources import *
 
 class World():
     def __init__(self, screen):
@@ -22,6 +23,11 @@ class World():
         self.control = Controller(self.tet)
 
         self.reset()
+
+        self.shotEnemy = False
+        self.shotPlayer = False
+        self.lineCleared = False
+        self.rowCleared = False
 
     def initPieces(self):
         for i in range(NUM_TETROMINOS):
@@ -69,20 +75,26 @@ class World():
         self.tet.spawn(piece)
 
     def update(self, events):
-        self.grid.clearRowCol(self.grid.checkRowCol())
+        self.shotEnemy = False
+        self.shotPlayer = False
+        self.lineCleared = False
+        self.rowCleared = False
+
+        print(self.score)
+
+        rowsCols = self.grid.checkRowCol()
+        if len(rowsCols[0]) != 0 or len(rowsCols[1]) != 0:
+            self.lineCleared = True
+            self.score += 10 * (len(rowsCols[0]) + len(rowsCols[1]))
+            self.player.doubleShoot = DOUBLE_SHOOT_TIME
+        self.grid.clearRowCol(rowsCols)
         self.control.update(events)
         if self.control.spawnNew:
             self.spawnPiece()
             self.control.spawnNew = False
         self.tet.update()
 
-        pink = self.grid.sum()
-        if pink < -PLAYER_MOVE_LIMIT:
-            self.player.movePlayer("right")
-        elif pink > PLAYER_MOVE_LIMIT:
-            self.player.movePlayer("left")
-        else:
-            self.player.movePlayer("stop")
+        self.player.movePlayer(self.tet.lastColourPlaced)
         
         self.player.update()
         if self.player.spawnBullet:
@@ -94,6 +106,8 @@ class World():
                 self.bullets.remove(b)
             for e in self.enemies:
                 if b.detectCollision(e):
+                    self.shotEnemy = True
+                    self.score += 1
                     if e in self.enemies:
                         self.enemies.remove(e)
                     if b in self.bullets:
@@ -101,6 +115,8 @@ class World():
                     continue
 
         if self.enemies == []:
+            self.rowCleared = True
+            self.score += 50
             self.clearEnemies()
 
         for b in self.enemyBullets:
@@ -108,6 +124,7 @@ class World():
             if b.y > SCREEN_HEIGHT:
                 self.enemyBullets.remove(b)
             if b.detectCollision(self.player):
+                self.shotPlayer = True
                 self.player.lives -= 1
                 if b in self.enemyBullets:
                     self.enemyBullets.remove(b)
@@ -142,6 +159,18 @@ class World():
             b.playerBullet = False
             self.enemyBullets.append(b)
             self.bulletTimer = ENEMY_BULLET_DELAY
+
+        self.playSounds()
+
+    def playSounds(self):
+        if self.rowCleared:
+            clearedRow.play()
+        elif self.lineCleared:
+            clearedLine.play()
+        elif self.shotPlayer:
+            playerShot.play()
+        elif self.shotEnemy:
+            enemyShot.play() 
 
 
     def render(self):
@@ -178,4 +207,8 @@ class World():
         self.clearEnemies()
         self.tet.select = []
         self.control.initState()
-        self.initPieces()       
+        self.initPieces()
+        self.score = 0
+        self.player.vx = 0
+        self.bullets = []
+        self.tet.lastColourPlaced = 0

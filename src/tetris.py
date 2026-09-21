@@ -186,6 +186,8 @@ class Tetris():
         self.selected = None
         self.grid = grid
         self.cooldown = 0
+        self.lastColourPlaced = 0 # adjusted so blue = -2, pink = 2
+
 
     def spawn(self, tetromino):
         self.select.append(tetromino)
@@ -218,6 +220,7 @@ class Tetris():
         if self.grid.addTetromino(self.selected.states[self.selected.rotate], (x, y), self.selected.colour):
             if self.selected in self.select:
                 self.select.remove(self.selected)
+                self.lastColourPlaced = self.selected.colour - 3
             return True
         return False
 

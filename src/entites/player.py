@@ -16,12 +16,19 @@ class Player(Entity):
         self.spaceDown = False
         self.lives = 3
 
+        self.doubleShoot = 0
+
     def update(self):
         super().update()
         if self.bulletTimer > 0:
             self.bulletTimer -= 1
         elif self.bulletTimer < 0:
             self.bulletTimer = 0
+
+        if self.doubleShoot > 0:
+            self.doubleShoot -= 1
+        if self.doubleShoot < 0:
+            self.doubleShoot = 0
 
         # self.vx = 0        
         # self.keyInputs()
@@ -35,19 +42,17 @@ class Player(Entity):
             self.vx = 0
             self.x = RIGHT_BORDER - self.width/2 - BORDER
 
-    def movePlayer(self, direction):
-        if direction == "left":
-            self.vx = -PLAYER_SPEED
-        elif direction == "right":
-            self.vx = PLAYER_SPEED
-        else:
-            self.vx = 0
+    def movePlayer(self, speed):
+        self.vx = PLAYER_SPEED * speed
 
     def shoot(self):
-        self.spawnBullet = False
-        if self.bulletTimer == 0:
+        if self.doubleShoot > 0:
             self.spawnBullet = True
-            self.bulletTimer = PLAYER_BULLET_DELAY
+        else:
+            self.spawnBullet = False
+            if self.bulletTimer == 0:
+                self.spawnBullet = True
+                self.bulletTimer = PLAYER_BULLET_DELAY
 
     def keyInputs(self):
         
